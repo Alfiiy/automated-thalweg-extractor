@@ -6,40 +6,49 @@ A Python-based CLI tool for automated DEM processing, roughness calculation, and
 
 This project follows a strict **Modular Object-Oriented Design**:
 
-```text
-terrain-analysis-pipeline/
-├── environment.yml            # Reproducible Conda environment
-├── src/
-│   ├── terrain_pipeline/      # Core Algorithm Package
-│   │   ├── __init__.py
-│   │   ├── aoi.py             # Bounds validation & Area checks
-│   │   ├── processor.py       # Base class for GDAL I/O & Reprojection
-│   │   └── ... (modules in development)
-│   └── main_test.py           # CLI Entry point (Prototype)
-├── data/                      # Raw inputs (ignored by Git)
-└── results/                   # Processed outputs (ignored by Git)
+    terrain-analysis-pipeline/
+    ├── environment.yml            # Reproducible Conda environment
+    ├── src/
+    │   ├── terrain_pipeline/      # Core Algorithm Package
+    │   │   ├── __init__.py
+    │   │   ├── aoi.py             # Bounds validation & Area checks
+    │   │   ├── processor.py       # Base class for GDAL I/O & Reprojection
+    │   │   └── ... (modules in development)
+    │   └── main_test.py           # CLI Entry point (Prototype)
+    ├── data/                      # Raw inputs (ignored by Git)
+    └── results/                   # Processed outputs (ignored by Git)
 
-🛠️ Installation & Setup
-To ensure reproducibility (Requirement F1) and proper GDAL bindings:
+Here is a clean, professionally formatted version of your README. I have optimized the hierarchy, used standard Markdown code blocks that are easy to copy-paste, and improved the visual flow while keeping it entirely in English.
 
-Clone the repository:
+Terrain Analysis Pipeline
+A robust framework for geographic data processing with built-in validation and reproducibility.
 
-Bash
-git clone <your-repo-url>
+# 🛠️ Installation & Setup
+
+To ensure reproducibility (Requirement F1) and proper GDAL bindings, please follow these steps:
+
+### 1. Clone the repository
+```bash
+git clone <repository-url>
 cd terrain-analysis-pipeline
-Create the Environment: Run the following command to install dependencies (GDAL, NumPy, etc.):
+```
 
-Bash
+### 2. Create the environment
+```bash
 conda env create -f environment.yml
-Activate:
+```
 
-Bash
+### 3. Activate the environment
+```bash
 conda activate terrain_pipeline
-🚀 Usage
-1. Data Validation (Current Capability)
-The system currently supports strict AOI (Area of Interest) validation to prevent excessive server load.
+```
 
-Python
+## 🚀 Usage
+
+### 1. Data Validation
+
+The system currently supports strict AOI (Area of Interest) validation to prevent excessive server load and ensure data integrity.
+```python
 from terrain_pipeline.aoi import AOIValidator
 
 # Example: Validate a bounding box
@@ -49,17 +58,21 @@ try:
     print(f"Processing region: {bbox}")
 except ValueError as e:
     print(f"Error: {e}")
-2. Architecture Overview
-AOIValidator: Enforces geographic limits and area caps (100 km²).
+```
 
-BaseRasterProcessor: Handles safe loading of GeoTIFFs and enforces memory management.
+### 2. Architecture Overview
 
-📅 Roadmap
-[x] Phase 1: Environment Setup & Modular Scaffolding (Completed)
+The pipeline is built on modular components designed for stability:
 
-[ ] Phase 2: Automated API Data Pipeline (In Progress)
+- **AOIValidator**: Enforces geographic limits and area caps (maximum 100 km²).
+- **BaseRasterProcessor**: Handles safe loading of GeoTIFFs and enforces memory management during large-scale processing.
 
-[ ] Phase 3: Core Hydro-Algorithms (Upcoming)
+## 📅 Roadmap
 
-📄 License
-MIT License
+- [x] Phase 1: Environment Setup & Modular Scaffolding (Completed)
+- [ ] Phase 2: Automated API Data Pipeline (In Progress)
+- [ ] Phase 3: Core Hydro-Algorithms (Upcoming)
+
+## 📄 License
+
+This project is licensed under the MIT License.
