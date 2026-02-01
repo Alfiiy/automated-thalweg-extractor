@@ -1,5 +1,7 @@
 import os
 from osgeo import gdal, osr
+from typing import List, Tuple
+
 
 class BaseRasterProcessor:
     """
@@ -24,19 +26,74 @@ class BaseRasterProcessor:
         band = self.ds.GetRasterBand(1)
         return band.ReadAsArray(), band.GetNoDataValue(), self.ds.GetGeoTransform(), self.ds.GetProjection()
 
-    def reproject(self, target_epsg: int, output_path: str):
+    def reproject(self, target_epsg: int, output_path: str) -> None:
         """
-        [Architecture Placeholder]
-        Ayan, please implement the reprojection logic here or call this method 
-        once the data is downloaded.
-        
-        Args:
-            target_epsg (int): The target UTM EPSG code.
-            output_path (str): Where to save the reprojected file.
+        TODO: add documentation
         """
-        # TODO: Implement gdal.Warp logic here to meet Requirement F2
         print(f"[System] Reprojecting {self.input_path} to EPSG:{target_epsg}...")
-        
-        # Placeholder logic for Ayan to fill or use:
-        # gdal.Warp(output_path, self.ds, dstSRS=f'EPSG:{target_epsg}')
-        pass
+
+        try:
+            gdal.Warp(
+                output_path,
+                self.ds,
+                dstSRS=f"EPSG:{target_epsg}"
+            )
+        except Exception as e:
+            raise RuntimeError("An exception occurred while running gdal.Warp():\n", e)
+
+        print(f"Output saved to: {output_path}")
+
+    def clip(self, bbox: Tuple[float, float, float, float], output_path: str) -> None:
+        """
+        TODO: add documentation
+        """
+        print(f"[System] Clipping {self.input_path} to bounding box: {bbox}...")
+        left, bottom, right, top = bbox
+
+        try:
+            gdal.Translate(
+                output_path,
+                self.ds,
+                projWin=[left, top, right, bottom]
+            )
+        except Exception as e:
+            raise RuntimeError("An exception occurred while running gdal.Translate():\n", e)
+
+        print(f"Output saved to: {output_path}")
+
+    def __del__(self):
+        self.ds = None  # properly close the dataset
+
+    @staticmethod
+    def merge(src_dir: str, tiles: List[str], output_path: str) -> None:
+        """
+        TODO: add documentation
+        """
+        gdal.UseExceptions()  # redeclare UseExceptions as this is a static method
+
+        print(f"[System] Merging {len(tiles)} tiles...")
+        vrt_path = os.path.join(src_dir, "merged.vrt")
+
+        # Create a Virtual Dataset (VRT)
+        try:
+            gdal.BuildVRT(vrt_path, tiles)
+        except Exception as e:
+            raise RuntimeError("An exception occurred while building the VRT:\n", e)
+
+        # Convert VRT to final compressed GeoTIFF
+        try:
+            gdal.Translate(
+                output_path,
+                vrt_path,
+                creationOptions=["TILED=YES", "COMPRESS=LZW", "BIGTIFF=IF_NEEDED"]
+            )
+        except Exception as e:
+            raise RuntimeError("An exception occurred while merging the VRT tiles with gdal.Translate():\n", e)
+
+        try:
+            os.remove(vrt_path)  # cleanup unneeded VRT file
+        except OSError as e:
+            # this is a non-critical error, we can continue processing
+            print(f"BaseRasterProcessor: failed to remove file {vrt_path} :\n", e)
+
+        print(f"Output saved to: {output_path}")
