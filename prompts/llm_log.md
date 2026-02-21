@@ -89,4 +89,17 @@ This document tracks AI-assisted development milestones for the Terrain Analysis
 
 **Issues:** None
 
+### 2/16 — Core Algorithm Implementation (Thalweg)
+**Objective:** Implement D8 flow routing and accumulation with production-grade efficiency while maintaining the existing OOP architecture.
+
+**Prompt:** "Draft the `ThalwegExtractor` class inheriting from `BaseRasterProcessor`. Utilize the `pysheds` library for the core matrix routing (Fill Sinks, Flow Direction, Accumulation) to ensure computational stability and performance over manual NumPy array shifting. Expose an accumulation threshold parameter for the final network extraction."
+
+**Action:** ✅ **Accepted**
+- I directed the integration of `pysheds` to handle the recursive D8 mathematical operations.
+- The AI assistant generated the boilerplate code mapping the `pysheds` grid functions to my specified 4-step pipeline (`fill_depressions`, `flowdir`, `accumulation`).
+- I ensured the input/output processes strictly adhere to the encapsulation provided by `BaseRasterProcessor` to maintain compatibility with the CLI tool.
+
+**Issues:** External library required. Added `pysheds` to `environment.yml`.
+
+
 
