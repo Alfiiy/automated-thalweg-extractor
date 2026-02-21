@@ -12,6 +12,7 @@ from terrain_pipeline.processor import BaseRasterProcessor
 from terrain_pipeline.dem import DEMFetcher
 from terrain_pipeline.landcover import LandCoverFetcher
 from terrain_pipeline.roughness import RoughnessCalculator
+from terrain_pipeline.thalweg import ThalwegExtractor
 
 def main():
     """
@@ -87,7 +88,22 @@ def main():
         print(f"❌ Error: {e}")
         sys.exit(1)
 
-    print("[INFO] Phase 2 checks complete. Waiting for Phase 3 (Data Pipeline) implementation.")
+    try:
+        # generate D8 thalweg network
+        thalweg_path = os.path.join(temp_working_dir, "thalweg_network.tif")
+        
+        # We use the reprojected DEM as the input for the hydro-algorithm
+        # to ensure all matrix calculations are in metric units (UTM)
+        thalweg_processor = ThalwegExtractor(dem_path_reprojected)
+        
+        # Extract network with an accumulation threshold of 1000 cells
+        thalweg_processor.extract(thalweg_path, threshold=1000)
+    except RuntimeError as e:
+        print(f"❌ Error during Thalweg Extraction: {e}")
+        sys.exit(1)
+
+    print("✅ [INFO] Phase 3 Complete. Entire Terrain Analysis Pipeline finished successfully!")
 
 if __name__ == "__main__":
     main()
+
