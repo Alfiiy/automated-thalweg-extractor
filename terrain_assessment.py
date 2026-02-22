@@ -30,11 +30,13 @@ def main():
         help="Bounding Box in 'min_lon,min_lat,max_lon,max_lat' format (e.g., '7.0,50.0,7.1,50.1')"
     )
 
+    # Modified for academic submission:
+    # Uses a default built-in key so the evaluator doesn't need to configure one.
     parser.add_argument(
         "--api-key",
         type=str,
-        required=True,
-        help="OpenTopography API key"
+        default="d36fde10ed7c771242bed3c1cd6bdbe7",  
+        help="OpenTopography API key. Defaults to a built-in key for evaluation purposes."
     )
     
     args = parser.parse_args()
