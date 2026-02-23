@@ -1,6 +1,8 @@
 import geopandas as gpd
 import requests
 import os
+import gc
+
 from datetime import datetime
 from shapely.geometry import box
 from typing import Tuple
@@ -9,7 +11,8 @@ from terrain_pipeline.processor import BaseRasterProcessor
 
 class LandCoverFetcher:
     """
-    TODO: add documentation
+    Downloads ESA WorldCover data for a specified bounding box, 
+    merges the required tiles, and clips the result to the exact AOI.
     """
     def __init__(self, valid_aoi: Tuple[float, float, float, float], output_dir: str):
         self.min_lon, self.min_lat, self.max_lon, self.max_lat = valid_aoi
@@ -17,7 +20,8 @@ class LandCoverFetcher:
 
     def get_land_cover(self) -> str:
         """
-        TODO: add documentation
+        Executes the download, merge, and clip operations.
+        Returns the path to the final clipped raster.
         """
         print("[LandCoverFetcher] Downloading land cover data from esa-worldcover.org ...")
         start_time = datetime.now()
@@ -86,6 +90,19 @@ class LandCoverFetcher:
         except RuntimeError as e:
             raise RuntimeError("LandCoverFetcher: ", e)
 
+        # ==============================================================
+        # Explicit Memory Release to prevent Windows WinError 32
+        # ==============================================================
+        # 1. Manually release the GDAL dataset lock
+        merged_landcover.close()
+        
+        # 2. Delete the Python instance reference
+        del merged_landcover
+        
+        # 3. Force garbage collection to clear underlying C++ pointers
+        gc.collect()
+        # ==============================================================
+
         # Cleanup temp files
         try:
             for f in successful_files:
@@ -94,7 +111,7 @@ class LandCoverFetcher:
             os.rmdir(temp_dir)
 
         except OSError as e:
-            # this is a non-critical error, we can continue processing
-            print(f"BaseRasterProcessor: failed to remove files from {temp_dir} :\n", e)
+            # Fallback exception handling
+            print(f"LandCoverFetcher: failed to remove files from {temp_dir} :\n", e)
 
         return clipped_output_filename

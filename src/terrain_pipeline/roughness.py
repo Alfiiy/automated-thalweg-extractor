@@ -5,34 +5,38 @@ from osgeo import gdal
 
 class RoughnessCalculator(BaseRasterProcessor):
     """
-    TODO: add documentation
+    Calculates surface roughness (Manning's n) based on ESA WorldCover classifications.
+    Ensures that all valid land cover classes are mapped to prevent NoData holes.
     """
     def __init__(self, input_path: str):
         super().__init__(input_path)
+        
+        # Comprehensive mapping of ESA WorldCover classes to Manning's n values.
         self.mannings_n = {
-            10: 0.02,  # Tree cover
-            20: 0.08,  # Shrubland
-            30: 0.032,  # Grassland
-            40: 0.035,  # Cropland
-            # 50: 0.0,  # Built-Up
+            10: 0.100,  # Tree cover (High flow resistance)
+            20: 0.080,  # Shrubland
+            30: 0.035,  # Grassland
+            40: 0.040,  # Cropland
+            50: 0.050,  # Built-Up (Urban areas, roads, buildings)
             60: 0.025,  # Bare / Sparse vegetation
-            # 70: 0.0,  # Snow and ice
-            # 80: 0.9,  # Permanent water bodies
-            90: 0.06,  # Herbaceous wetland
-            # 95: 0.0,  # Mangroves
-            100: 0.03,  # Moss and lichen
+            70: 0.020,  # Snow and ice (Smooth surface)
+            80: 0.030,  # Permanent water bodies (River channels have low resistance)
+            90: 0.060,  # Herbaceous wetland
+            95: 0.100,  # Mangroves (High flow resistance)
+            100: 0.030, # Moss and lichen
         }
 
     def from_landcover(self, output_path) -> None:
         """
-        TODO: add documentation
+        Reads the categorical land cover raster and maps it to a continuous 
+        friction surface. Handles NoData propagation explicitly.
         """
         print(f"[RoughnessGenerator] Generating roughness raster from {self.input_path} ...")
 
-        # create and write data to a raster
-        driver_gtiff = gdal.GetDriverByName('GTiff')  # instantiate a driver for the GeoTiff file format
+        # Instantiate a driver for the GeoTiff file format
+        driver_gtiff = gdal.GetDriverByName('GTiff')
 
-        # create a new raster
+        # Create a new raster dataset
         try:
             new_dataset = driver_gtiff.Create(
                 output_path,
@@ -44,25 +48,24 @@ class RoughnessCalculator(BaseRasterProcessor):
         except Exception as e:
             raise RuntimeError("An exception occurred while creating the roughness raster file:\n", e)
 
-        # set the same raster projection
+        # Inherit projection and geotransform from the source landcover data
         new_dataset.SetProjection(self.ds.GetProjection())
-
-        # set the same geotransform
         new_dataset.SetGeoTransform(self.ds.GetGeoTransform())
 
-        # create and write data values to the raster
+        # Read array data and the designated NoData value
         landcover_data = self.ds.GetRasterBand(1).ReadAsArray()
         nodata_val = self.ds.GetRasterBand(1).GetNoDataValue()
 
-        # replace land cover categories with corresponding mannings roughness values
-        # if the category is not known, replace with the nodata value
+        # Execute dictionary mapping across the entire NumPy matrix
+        # Any missing class is safely caught and assigned the NoData value
         replace_func = np.vectorize(lambda x: self.mannings_n.get(x, nodata_val))
-
         roughness_data = replace_func(landcover_data)
 
-        new_dataset.GetRasterBand(1).WriteArray(roughness_data)  # write the numpy array to the raster
-        new_dataset.GetRasterBand(1).SetNoDataValue(nodata_val)  # set the no data value
+        # Write the physical roughness parameters back to the raster
+        new_dataset.GetRasterBand(1).WriteArray(roughness_data)
+        new_dataset.GetRasterBand(1).SetNoDataValue(nodata_val)
 
         print(f"Output saved to: {output_path}")
 
-        new_dataset = None  # properly close dataset
+        # Explicitly close datasets to release memory
+        new_dataset = None

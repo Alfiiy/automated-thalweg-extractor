@@ -61,6 +61,12 @@ class BaseRasterProcessor:
 
         print(f"Output saved to: {output_path}")
 
+    def close(self):
+        """
+        Explicitly release the GDAL dataset handle to free the file lock on Windows.
+        """
+        self.ds = None
+
     def __del__(self):
         self.ds = None  # properly close the dataset
 
