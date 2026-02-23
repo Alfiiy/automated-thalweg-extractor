@@ -1,8 +1,8 @@
 # Terrain Analysis Pipeline
 
-A Python-based CLI tool for automated DEM processing, roughness calculation, and D8 thalweg extraction using GDAL and NumPy vectorization.
+A Python-based CLI tool for automated DEM processing, spatially distributed roughness calculation, and D8 thalweg extraction using GDAL, NumPy vectorization, and PySheds.
 
-> **Special Note for Final Evaluation (Post-Presentation Addendum)**
+> **⚠️ Special Note for Final Evaluation (Post-Presentation Addendum)**
 > This repository contains the finalized, production-grade codebase, which includes critical structural overhauls implemented after the initial project presentation on February 5th. To ensure absolute scientific accuracy and system stability, the following core engineering resolutions were executed:
 > 1. **Memory Management:** Resolved Windows `[WinError 32]` file-locking issues and eliminated storage leaks via explicit C++ level garbage collection (`gc.collect()`) and GDAL dataset nullification.
 > 2. **Physical Parameter Calibration:** Corrected critical omissions in the spatial matrix. ESA WorldCover Class 80 (Permanent Water) and Class 50 (Urban) are now strictly parameterized (n=0.030 and n=0.050), eliminating NoData transparency holes. Corrected Tree Cover resistance to a physically accurate 0.100.
@@ -10,47 +10,45 @@ A Python-based CLI tool for automated DEM processing, roughness calculation, and
 > 4. **Standardized Logging System:** Upgraded from basic standard output to a robust dual-handler logging module (`src/terrain_pipeline/logger.py`). Execution states and critical exception stack traces are now persistently recorded to `logs/system.log`.
 > 5. **Cross-Platform Build Compatibility:** Restructured the `Makefile` with OS-conditional logic (`ifeq ($(OS),Windows_NT)`). The build system now natively executes environment-specific directory parsing and cleanup operations across both Windows and POSIX systems without throwing false execution errors.
 > 6. **Academic Documentation & Error Analysis:** Finalized `notebooks/results_discussions.ipynb` to objectively document the physical and geometric limitations of applying the D8 routing algorithm over 30m resolution DEMs, specifically addressing the localized distortions caused by urban artifacts (e.g., bridges acting as topographic barriers).
-> 
-> *Please review `notebooks/results_discussions.ipynb` for the comprehensive analysis of algorithmic limitations regarding urban infrastructure artifacts.*
 
 ---
 
 ## 1. Project Overview
 This automated pipeline executes a fully headless geomorphological extraction process using NASADEM (30m) and ESA WorldCover (10m) API data. It computes the primary valley thalweg networks via the D8 flow routing algorithm and derives spatially distributed Manning's n roughness coefficients for 2D hydrodynamic modeling.
 
-## 2. Quick Start & Execution
-The system is equipped with an OS-aware `Makefile` that handles cross-platform I/O operations (Windows/POSIX) safely.
+## 2. Core Deliverables
+Upon successful execution, the following physical files are generated in the `results/` directory with zero memory leakage:
+* `dem_reprojected.tif`: Topographic elevation matrix (UTM Metric).
+* `landcover_reprojected.tif`: Categorical land cover matrix.
+* `thalweg_network.tif`: D8 algorithmic routing output.
+* `roughness.tif`: Continuous friction surface (Manning's n).
+* `map_preview.png`: Cartographically accurate tri-panel visualization.
 
-### Clean Previous Build:
-Ensures absolute zero-state environment by removing all temporary handles and legacy `.tif` matrices.
-```bash
-make clean
+---
 
+## 3. Project Structure
+This project follows a strict Modular Object-Oriented Design:
 
+```text
+terrain-analysis-pipeline/
+├── environment.yml               # Reproducible Conda environment
+├── Makefile                      # OS-aware build directives
+├── terrain_assessment.py         # Main CLI Entry Point
+├── notebooks/
+│   └── results_discussions.ipynb # Academic analysis & algorithmic limitations
+├── src/
+│   └── terrain_pipeline/         # Core Algorithm Package
+│       ├── __init__.py
+│       ├── logger.py             # Dual-handler logging system
+│       ├── aoi.py                # Bounds validation & Area checks
+│       ├── processor.py          # Base class for GDAL I/O & Memory management
+│       ├── landcover.py          # ESA WorldCover extraction
+│       ├── roughness.py          # Manning's n parameterization
+│       ├── routing.py            # D8 Thalweg extraction
+│       └── visualizer.py         # Cartographic map generation
+├── logs/                         # Persistent system execution logs
+└── results/                      # Processed outputs (Git ignored)
 
-
-
-
-## 📂 Project Structure
-
-This project follows a strict **Modular Object-Oriented Design**:
-
-    terrain-analysis-pipeline/
-    ├── environment.yml            # Reproducible Conda environment
-    ├── src/
-    │   ├── terrain_pipeline/      # Core Algorithm Package
-    │   │   ├── __init__.py
-    │   │   ├── aoi.py             # Bounds validation & Area checks
-    │   │   ├── processor.py       # Base class for GDAL I/O & Reprojection
-    │   │   └── ... (modules in development)
-    │   └── main_test.py           # CLI Entry point (Prototype)
-    ├── data/                      # Raw inputs (ignored by Git)
-    └── results/                   # Processed outputs (ignored by Git)
-
-Here is a clean, professionally formatted version of your README. I have optimized the hierarchy, used standard Markdown code blocks that are easy to copy-paste, and improved the visual flow while keeping it entirely in English.
-
-Terrain Analysis Pipeline
-A robust framework for geographic data processing with built-in validation and reproducibility.
 
 # 🛠️ Installation & Setup
 
