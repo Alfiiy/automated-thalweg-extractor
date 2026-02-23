@@ -86,8 +86,8 @@ Please run the following commands in your Anaconda/Miniconda Prompt terminal str
 ## 📅 Roadmap
 
 - [x] Phase 1: Environment Setup & Modular Scaffolding (Completed)
-- [ ] Phase 2: Automated API Data Pipeline (In Progress)
-- [ ] Phase 3: Core Hydro-Algorithms (Upcoming)
+- [x] Phase 2: Automated API Data Pipeline (Completed)
+- [x] Phase 3: Core Hydro-Algorithms (Completed)
 
 ## 📄 License
 
