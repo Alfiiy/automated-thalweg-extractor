@@ -40,7 +40,7 @@ def main():
     parser.add_argument(
         "--api-key",
         type=str,
-        default="d36fde10ed7c771242bed3c1cd6bdbe7",  
+        default="xxx",  
         help="OpenTopography API key. Defaults to a built-in key for evaluation purposes."
     )
     
@@ -122,4 +122,5 @@ def main():
     logger.info(f"=== Phase 3 Complete. Pipeline finished successfully in {elapsed_time:.2f} seconds. ===")
 
 if __name__ == "__main__":
+
     main()
