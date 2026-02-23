@@ -40,7 +40,7 @@ def main():
     parser.add_argument(
         "--api-key",
         type=str,
-        default="xxx",  
+        default="YOUR_API_KEY_HERE",  
         help="OpenTopography API key. Defaults to a built-in key for evaluation purposes."
     )
     
@@ -124,3 +124,4 @@ def main():
 if __name__ == "__main__":
 
     main()
+
