@@ -62,4 +62,5 @@ def main():
     # 3. Setup Strict Output Directories
     results_dir = os.path.join(os.getcwd(), "results")
     figures_dir = os.path.join(os.getcwd(), "figures")
-    os.makedirs(results_dir, exist_ok=True
+    os.makedirs(results_dir, exist_ok=True)
+
