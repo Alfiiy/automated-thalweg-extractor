@@ -1,4 +1,3 @@
-````markdown
 # Terrain Analysis Pipeline
 
 A Python-based CLI tool for automated DEM processing, spatially distributed roughness calculation, and D8 thalweg extraction using GDAL, NumPy vectorization, and PySheds.
@@ -129,6 +128,3 @@ python terrain_assessment.py --bbox "7.55,50.30,7.65,50.40"
 ## 📄 License
 
 This project is licensed under the MIT License.
-
-```
-```

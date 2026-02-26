@@ -40,7 +40,7 @@ def main():
     parser.add_argument(
         "--api-key",
         type=str,
-        default="YOUR_API_KEY_HERE",  
+        default="demoapikeyot2022",
         help="OpenTopography API key. Defaults to a built-in key for evaluation purposes."
     )
     
@@ -112,7 +112,7 @@ def main():
     # 8. Generate Visuals
     try:
         logger.info("[STEP 6] Generating Final Visual Report...")
-        # 强制将制图保存到 figures 文件夹
+
         vis_path = os.path.join(figures_dir, "map_preview.png")
         visualizer = ResultVisualizer(dem_path_reprojected, roughness_path, thalweg_path)
         visualizer.generate_preview(vis_path)

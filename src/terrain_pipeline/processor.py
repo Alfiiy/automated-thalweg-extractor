@@ -28,7 +28,7 @@ class BaseRasterProcessor:
 
     def reproject(self, target_epsg: int, output_path: str) -> None:
         """
-        TODO: add documentation
+        Reproject the raster to the projected coordinate using gdal warp and save as a new raster file
         """
         print(f"[System] Reprojecting {self.input_path} to EPSG:{target_epsg}...")
 
@@ -45,7 +45,7 @@ class BaseRasterProcessor:
 
     def clip(self, bbox: Tuple[float, float, float, float], output_path: str) -> None:
         """
-        TODO: add documentation
+        Crop the dataset to a given bounding box using gdal translate and save as a new raster file
         """
         print(f"[System] Clipping {self.input_path} to bounding box: {bbox}...")
         left, bottom, right, top = bbox
@@ -73,7 +73,7 @@ class BaseRasterProcessor:
     @staticmethod
     def merge(src_dir: str, tiles: List[str], output_path: str) -> None:
         """
-        TODO: add documentation
+        Merge a list of tiles in a given source directory and save as a new raster file
         """
         gdal.UseExceptions()  # redeclare UseExceptions as this is a static method
 

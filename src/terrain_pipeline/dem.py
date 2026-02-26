@@ -6,7 +6,7 @@ from datetime import datetime
 
 class DEMFetcher:
     """
-    TODO: add documentation
+    Class for fetching DEM data from OpenTopography
     """
     def __init__(self, valid_aoi: Tuple[float, float, float, float], dem_type: str, output_format: str, api_key: str, output_dir: str):
         self.min_lon, self.min_lat, self.max_lon, self.max_lat = valid_aoi
@@ -17,7 +17,7 @@ class DEMFetcher:
 
     def get_dem(self) -> str:
         """
-        TODO: add documentation
+        Download the dem bounded by the designated bounding box and save the result to the output directory
         """
         print(f"[DEMFetcher] Downloading DEM from OpenTopography...")
         start_time = datetime.now()
