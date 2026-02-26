@@ -6,12 +6,13 @@ build-backend = "setuptools.build_meta"
 name = "terrain_pipeline"
 version = "0.1.0"
 authors = [
-  { name="Zijun Zhang", email="your.email@example.com" },
-  { name="Ayan Kumar De", email="ayan.email@example.com" },
+  { name="Zijun Zhang", email="st197340@stud.uni-stuttgart.de" },
+  { name="Ayan Kumar De", email="st198722@stud.uni-stuttgart.de" },
 ]
 description = "Automated Thalweg Extractor for WRR Project"
 readme = "README.md"
 requires-python = ">=3.10"
 
 [tool.setuptools.packages.find]
+
 where = ["src"]
